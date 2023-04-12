@@ -25,7 +25,7 @@ schema = StructType([
     ])),
 ])
 
-df = spark.read.schema(schema).option("multiline","true").json("gs://what-a-bucket/Financials/202*/")
+df = spark.read.schema(schema).option("multiline","true").json("gs://what-a-bucket/Financials1/archive-4/2022.QTR1/")
 df.cache();
 display(df);
 
@@ -42,8 +42,9 @@ StructField("label",StringType(),True),
 ])
 df1 = df.select("startDate", "endDate", "year", "quarter", "symbol", explode("data.bs").alias("X"))
 df2 = df1.select("startDate","endDate", "symbol", "year", "quarter", col("X.label"), col("X.concept"), col("X.unit"), col("X.value"))
-
-df2.write.saveAsTable("records1")
+display(df1)
+display(df2)
+df2.write.saveAsTable("records1_2")
 
 
 
@@ -62,7 +63,7 @@ df2.write.saveAsTable("records1")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select count(*) from records1
+# MAGIC select count(*) from records1_1
 
 # COMMAND ----------
 
@@ -89,13 +90,13 @@ df2.write.saveAsTable("records1")
 # MAGIC            quarter, 
 # MAGIC            ROW_NUMBER() OVER(PARTITION BY value, symbol, year, quarter
 # MAGIC         ORDER BY label, concept) AS DuplicateCount
-# MAGIC     FROM Financials.balanceSheet.records1)
+# MAGIC     FROM Financials.balanceSheet.records1_2)
 # MAGIC SELECT * FROM buff;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE TABLE Financials.balanceSheet.records3 AS 
+# MAGIC CREATE OR REPLACE TABLE Financials.balanceSheet.records3_2 AS 
 # MAGIC (
 # MAGIC   SELECT label, 
 # MAGIC            concept, 
@@ -113,7 +114,7 @@ df2.write.saveAsTable("records1")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_l, unit as unit_l, value as value_l, quarter as quarter_l FROM records3 where label = 'Total liabilities'
+# MAGIC DELETE FROM records3_2 WHERE symbol = 'TMB'
 
 # COMMAND ----------
 

@@ -6,34 +6,34 @@
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW current_assets_v AS (
-SELECT label as label_a, concept as concept_a, symbol as symbol_a, year as year_a, unit as unit_a, value as value_a, quarter as quarter_a FROM records3 where label = 'Total current assets')
+SELECT label as label_a, concept as concept_a, symbol as symbol_a, year as year_a, unit as unit_a, value as value_a, quarter as quarter_a FROM records3_2 where label = 'Total current assets')
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW current_liabilities_v AS (
-SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_l, unit as unit_l, value as value_l, quarter as quarter_l FROM records3 where label = 'Total current liabilities')
+SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_l, unit as unit_l, value as value_l, quarter as quarter_l FROM records3_2 where label = 'Total current liabilities')
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW net_inventories_v AS (
-  SELECT label as label_i, concept as concept_i, symbol as symbol_i, year as year_i, unit as unit_i, value as value_i, quarter as quarter_i FROM records3 where concept = 'InventoryNet'
+  SELECT label as label_i, concept as concept_i, symbol as symbol_i, year as year_i, unit as unit_i, value as value_i, quarter as quarter_i FROM records3_2 where concept = 'InventoryNet'
 )
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW shareholders_equity_v AS (
-  SELECT label as label_she, concept as concept_she, symbol as symbol_she, year as year_she, unit as unit_she, value as value_she, quarter as quarter_she FROM records3 where concept = "StockholdersEquity"
+  SELECT label as label_she, concept as concept_she, symbol as symbol_she, year as year_she, unit as unit_she, value as value_she, quarter as quarter_she FROM records3_2 where concept = "StockholdersEquity"
 )
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW total_assets_v AS (
-SELECT label as label_a, concept as concept_a, symbol as symbol_a, year as year_a, unit as unit_a, value as value_a, quarter as quarter_a FROM records3 where label = 'Total assets')
+SELECT label as label_a, concept as concept_a, symbol as symbol_a, year as year_a, unit as unit_a, value as value_a, quarter as quarter_a FROM records3_2 where label = 'Total assets')
 
 -- COMMAND ----------
 
 CREATE OR REPLACE TEMPORARY VIEW total_liabilities_v AS (
-SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_l, unit as unit_l, value as value_l, quarter as quarter_l FROM records3 where label = 'Total liabilities')
+SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_l, unit as unit_l, value as value_l, quarter as quarter_l FROM records3_2 where label = 'Total liabilities')
 
 -- COMMAND ----------
 
@@ -64,18 +64,23 @@ SELECT label as label_l, concept as concept_l, symbol as symbol_l, year as year_
 -- MAGIC df_new = df_new.withColumn("quick_ratio", ((col("total_current_assets")-col("value_i"))/col("total_current_liabilities")))
 -- MAGIC 
 -- MAGIC # calculate debt-to-asset ratio
--- MAGIC #df_new = df_new.join(df_total_assets, ( (df_new["symbol"] == df_total_assets["symbol_a"]) & (df_new["year"] == df_total_assets["year_a"]) & (df_new["quarter"] == df_total_assets["quarter_a"]) & (df_new["unit"] == df_total_assets["unit_a"]) ))
--- MAGIC #df_new = df_new.join(df_total_liabilities, ( (df_new["symbol"] == df_total_liabilities["symbol_l"]) & (df_new["year"] == df_total_liabilities["year_l"]) & (df_new["quarter"] == df_total_liabilities["quarter_l"]) & (df_new["unit"] == df_total_liabilities["unit_l"]) ))
+-- MAGIC df_new = df_new.join(df_total_assets, ( (df_new["symbol"] == df_total_assets["symbol_a"]) & (df_new["year"] == df_total_assets["year_a"]) & (df_new["quarter"] == df_total_assets["quarter_a"]) & (df_new["unit"] == df_total_assets["unit_a"]) ))
+-- MAGIC df_new = df_new.join(df_total_liabilities, ( (df_new["symbol"] == df_total_liabilities["symbol_l"]) & (df_new["year"] == df_total_liabilities["year_l"]) & (df_new["quarter"] == df_total_liabilities["quarter_l"]) & (df_new["unit"] == df_total_liabilities["unit_l"]) ))
 -- MAGIC 
--- MAGIC #df_new = df_new.withColumn("debt_asset_ratio", (col("value_l")/col("value_a")))
+-- MAGIC df_new = df_new.withColumn("debt_asset_ratio", (col("value_l")/col("value_a")))
 -- MAGIC 
 -- MAGIC #clean up columns
 -- MAGIC drop_cols = ("label_i", "concept_i", "symbol_i", "quarter_i", "year_i", "unit_i", "label_a", "concept_a", "symbol_a", "quarter_a", "year_a", "unit_a", "label_l", "concept_l", "symbol_l", "quarter_l", "year_l", "unit_l")
 -- MAGIC df_new = df_new.drop(*drop_cols)
--- MAGIC df_new = df_new.withColumnRenamed("value_i","net_inventories")
--- MAGIC 
+-- MAGIC df_new = df_new.withColumnRenamed("value_i","net_inventories").withColumnRenamed("value_a","total_assets").withColumnRenamed("value_l","total_liabilities")
+-- MAGIC df_new.write.saveAsTable("records4_2")
 -- MAGIC display(df_new)
 -- MAGIC display(df_total_assets.count())
+
+-- COMMAND ----------
+
+select * from records4_2
+where where symbol = 'AAPL'
 
 -- COMMAND ----------
 
