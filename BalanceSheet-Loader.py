@@ -32,7 +32,7 @@ schema = StructType([
     ]))),
 ])
 
-df = spark.read.schema(schema).option("multiline","true").json("gs://what-a-bucket/FR6/")
+df = spark.read.schema(schema).option("multiline","true").json("gs://what-a-bucket/SP100/")
 
 #df=spark.readStream.format("cloudFiles").option("cloudFiles.format", "json").option("cloudFiles.useIncrementalListing", "false").option("cloudFiles.inferColumnTypes", "false").option("cloudFiles.schemaEvolutionMode", "addNewColumns").option("cloudFiles.schemaLocation", "gs://what-a-bucket/FR5/").load("gs://what-a-bucket/FR6/")
 display(df);
@@ -81,6 +81,14 @@ df3.createOrReplaceTempView("records_2")
 # MAGIC         ORDER BY label, concept) AS DuplicateCount
 # MAGIC     FROM records_2)
 # MAGIC SELECT * FROM buff;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
+# MAGIC CREATE TABLE  records_ml AS  (
+# MAGIC SELECT * FROM records_v_2
+# MAGIC )
 
 # COMMAND ----------
 
@@ -245,7 +253,7 @@ df3.createOrReplaceTempView("records_2")
 
 # MAGIC %sql
 # MAGIC 
-# MAGIC CREATE TABLE IF NOT EXISTS records_final (
+# MAGIC CREATE TABLE IF NOT EXISTS SP100_1 (
 # MAGIC   symbol STRING,
 # MAGIC   year STRING,
 # MAGIC   unit STRING,
@@ -268,16 +276,16 @@ df3.createOrReplaceTempView("records_2")
 
 # MAGIC %sql
 # MAGIC 
-# MAGIC MERGE INTO records_final
+# MAGIC MERGE INTO SP100_1
 # MAGIC USING records_3
-# MAGIC ON records_final.year = records_3.year AND records_final.symbol = records_3.symbol AND records_final.quarter = records_3.quarter
+# MAGIC ON SP100.year = records_3.year AND SP100.symbol = records_3.symbol AND SP100.quarter = records_3.quarter
 # MAGIC WHEN MATCHED THEN UPDATE SET *
 # MAGIC WHEN NOT MATCHED THEN INSERT *;
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT * FROM records_final
+# MAGIC SELECT count(*) FROM SP100
 
 # COMMAND ----------
 
