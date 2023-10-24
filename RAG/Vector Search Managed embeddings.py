@@ -104,9 +104,9 @@ print(vs_index_fullname)
 
 index = vsc.get_index(vs_index_fullname,vector_search_endpoint_name)
 query_resp = index.similarity_search(
-query_text="P&G vision",
+query_text="What is Tesla's vision?",
 columns=["id", "title", "content"],
-filters={"title": "/Volumes/prasanna/rag/pdfs/ADP Databricks Serverless.pdf"}
+#filters={"title": "/Volumes/prasanna/rag/pdfs/P&g.pdf"}
 )
 
 print(query_resp)
