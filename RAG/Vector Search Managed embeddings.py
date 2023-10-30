@@ -117,7 +117,11 @@ print(query_resp)
 
 # COMMAND ----------
 
-vsc.delete_index(index_name=vs_index_fullname)
+vsc.delete_index(index_name="prasanna.rag.en_wiki_index", endpoint_name="foo")
+
+# COMMAND ----------
+
+vsc.delete_endpoint(name="foo")
 
 # COMMAND ----------
 
