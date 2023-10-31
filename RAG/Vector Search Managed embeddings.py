@@ -109,7 +109,7 @@ columns=["id", "title", "content"],
 #filters={"title": "/Volumes/prasanna/rag/pdfs/P&g.pdf"}
 )
 
-print(query_resp)
+print(query_resp["result"].get("data_array")[0][2])
 
 # COMMAND ----------
 
